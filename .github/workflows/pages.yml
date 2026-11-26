@@ -1,0 +1,62 @@
+name: Build PDF and deploy to GitHub Pages
+# Every push to main checks the slide files and exports the PDF (download it from the run's "Artifacts").
+# Deploying to Pages runs only when the repository variable PAGES_ENABLED is "true" (see README → Deploy).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PDF tools (page-count check)
+        run: sudo apt-get install -y --no-install-recommends poppler-utils
+
+      - name: Check slide files and export the PDF from the website
+        env:
+          CI: "true"
+        run: python3 scripts/build_pdf.py
+
+      - name: Keep the PDF as a downloadable workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: slides-pdf
+          path: InnovateX-Team8-Managing-Skills.pdf
+
+      - name: Collect site files
+        run: |
+          mkdir _site
+          cp -r index.html assets content InnovateX-Team8-Managing-Skills.pdf _site/
+          touch _site/.nojekyll
+
+      - if: vars.PAGES_ENABLED == 'true'
+        uses: actions/configure-pages@v5
+
+      - if: vars.PAGES_ENABLED == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    if: vars.PAGES_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
