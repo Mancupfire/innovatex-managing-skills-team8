@@ -2,6 +2,9 @@
 
 **Team 8 · Managing Skills · VinUniversity** — presentation website (12 slides, target 12 min, max 15 min).
 
+- **Website:** https://mancupfire.github.io/innovatex-managing-skills-team8/ (open one slide directly: [`#slide-09`](https://mancupfire.github.io/innovatex-managing-skills-team8/#slide-09))
+- **PDF:** https://mancupfire.github.io/innovatex-managing-skills-team8/InnovateX-Team8-Managing-Skills.pdf (rebuilt on every push to `main`)
+
 InnovateX is a fictional organisation. The team plays its new management and asks senior leadership to approve a measurable improvement plan. The website is what we present in class. The PDF exported from it is what we submit. This repository is where the team keeps updating it.
 
 > **Status: DRAFT** — 2 of 12 slides are final (09–10). The PDF carries a *Draft* stamp until every slide is final.
@@ -110,13 +113,13 @@ It renders the same website files with the print stylesheet. Navigation, notes a
 - **Always:** checks the slide files, exports the PDF, and attaches it to the run as the **`slides-pdf`** artifact (Actions → latest run → Artifacts).
 - **When Pages is on:** publishes the site and the fresh PDF to GitHub Pages, so the website’s *Download PDF* always matches the slides. All paths are relative, so it works under `https://<user>.github.io/<repo>/` and on deep links like `…/#slide-09`. Fonts are self-hosted and there are no CDNs.
 
-GitHub Pages is **not on yet**. This repository is private, and the owner’s current GitHub plan does not offer Pages for private repositories (the API returned *“Your current plan does not support GitHub Pages for this repository”*). To turn it on, the owner either makes the repo public or upgrades the plan, then:
+GitHub Pages is **on** (Settings → Pages → Source: *GitHub Actions*; repository variable `PAGES_ENABLED=true`). After a commit to `main`, the site and PDF update in about 1–2 minutes. To redeploy without a change: **Actions → Build PDF and deploy to GitHub Pages → Run workflow**, or
 
 ```bash
-gh api -X POST repos/Mancupfire/innovatex-managing-skills-team8/pages -f build_type=workflow   # or Settings → Pages → Source: GitHub Actions
-gh variable set PAGES_ENABLED --body true --repo Mancupfire/innovatex-managing-skills-team8
 gh workflow run pages.yml --repo Mancupfire/innovatex-managing-skills-team8
 ```
+
+To pause deploying (e.g. if the repo goes private again on a plan without Pages), set `PAGES_ENABLED` to `false`. The PDF artifact keeps being built.
 
 ## Files
 
